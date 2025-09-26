@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>We9 CMS</title>
+    <link rel="stylesheet" href="css/cms.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="cms-container">
+        <header class="cms-header">
+            <h1>We9 CMS</h1>
+            <div class="auth-section">
+                <button id="login-btn">Login dengan Google</button>
+                <span id="user-info" style="display: none;">
+                    <span id="user-name"></span>
+                    <button id="logout-btn">Logout</button>
+                </span>
+            </div>
+        </header>
+
+        <div class="cms-content">
+            <div class="upload-section">
+                <h2>Upload Lagu Baru</h2>
+                <form id="upload-form">
+                    <div class="form-group">
+                        <label for="song-title">Judul Lagu</label>
+                        <input type="text" id="song-title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="song-artist">Artis</label>
+                        <input type="text" id="song-artist" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="song-cover">Cover Image (URL)</label>
+                        <input type="text" id="song-cover" placeholder="https://example.com/cover.jpg">
+                    </div>
+                    <div class="form-group">
+                        <label for="song-audio">Audio File (URL)</label>
+                        <input type="text" id="song-audio" required placeholder="https://example.com/song.mp3">
+                    </div>
+                    <button type="submit" id="upload-btn">Upload Lagu</button>
+                </form>
+            </div>
+
+            <div class="songs-list">
+                <h2>Daftar Lagu</h2>
+                <div id="songs-table-container">
+                    <table id="songs-table">
+                        <thead>
+                            <tr>
+                                <th>Judul</th>
+                                <th>Artis</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="songs-table-body">
+                            <!-- Daftar lagu akan dimuat di sini -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="js/firebase.js"></script>
+    <script type="module" src="js/cms.js"></script>
+</body>
+</html>
