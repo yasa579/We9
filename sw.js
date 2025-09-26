@@ -1,16 +1,9 @@
 const CACHE_NAME = 'we9-music-player-v1';
 const urlsToCache = [
-  '/',
-  '/index.html',
-  '/BGS.mp4',
-  '/Matematika.mp3',
-  '/Mimpi.mp3',
-  '/Kunang-Kunang.mp3',
-  '/Memori-Suara.mp3',
-  '/Revolusi.mp3',
-  '/Download.svg',
-  '/icon-192x192.png',
-  '/icon-512x512.png'
+  './',
+  './index.html',
+  './manifest.json'
+  // File audio dan video akan di-cache saat diminta pertama kali
 ];
 
 // Install event
@@ -24,7 +17,7 @@ self.addEventListener('install', (event) => {
   );
 });
 
-// Fetch event
+// Fetch event - Cache pada permintaan pertama
 self.addEventListener('fetch', (event) => {
   event.respondWith(
     caches.match(event.request)
@@ -33,9 +26,38 @@ self.addEventListener('fetch', (event) => {
         if (response) {
           return response;
         }
-        return fetch(event.request);
-      }
-    )
+
+        // Clone the request
+        const fetchRequest = event.request.clone();
+
+        return fetch(fetchRequest).then(
+          (response) => {
+            // Check if we received a valid response
+            if (!response || response.status !== 200 || response.type !== 'basic') {
+              return response;
+            }
+
+            // Clone the response
+            const responseToCache = response.clone();
+
+            caches.open(CACHE_NAME)
+              .then((cache) => {
+                // Cache asset yang diminta
+                cache.put(event.request, responseToCache);
+              });
+
+            return response;
+          }
+        ).catch(() => {
+          // Fallback untuk audio files
+          if (event.request.url.includes('.mp3')) {
+            return new Response('Offline - Audio tidak tersedia', {
+              status: 408,
+              statusText: 'Offline'
+            });
+          }
+        });
+      })
   );
 });
 
