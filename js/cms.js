@@ -128,4 +128,18 @@ async function loadSongs() {
                 const songId = e.target.getAttribute('data-id');
                 if (confirm('Apakah Anda yakin ingin menghapus lagu ini?')) {
                     try {
-                        await delete
+                        await deleteDoc(doc(db, 'songs', songId));
+                        alert('Lagu berhasil dihapus!');
+                        loadSongs(); // Muat ulang daftar lagu
+                    } catch (error) {
+                        console.error('Error deleting song:', error);
+                        alert('Terjadi kesalahan saat menghapus lagu. Silakan coba lagi.');
+                    }
+                }
+            });
+        });
+    } catch (error) {
+        console.error('Error loading songs:', error);
+        songsTableBody.innerHTML = '<tr><td colspan="3">Terjadi kesalahan saat memuat lagu.</td></tr>';
+    }
+}
