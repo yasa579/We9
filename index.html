@@ -3,7 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Song</title>
+  <title>We9 - Music Player</title>
+  
+  <!-- PWA Metadata -->
+  <meta name="theme-color" content="#000000">
+  <meta name="description" content="We9 Music Player - Listen to your favorite songs">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="apple-touch-icon" href="icon-192x192.png">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -57,6 +64,49 @@
       background-size: contain;
       border: none;
       cursor: pointer;
+      position: relative;
+    }
+
+    /* Modal untuk instalasi PWA */
+    .install-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      z-index: 100;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .install-modal-content {
+      background: rgba(255,255,255,0.9);
+      color: #000;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 400px;
+      text-align: center;
+    }
+    
+    .install-modal h2 {
+      color: #000;
+      font-family: 'Roboto', sans-serif;
+    }
+    
+    .install-modal button {
+      background: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      margin: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    
+    .install-modal button.close {
+      background: #f44336;
     }
 
     label {
@@ -88,19 +138,45 @@
       object-fit: cover;
       z-index: -1;
     }
+    
+    /* Offline indicator */
+    .offline-indicator {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      background: rgba(0,0,0,0.7);
+      color: white;
+      padding: 5px 10px;
+      border-radius: 5px;
+      font-size: 0.8em;
+      display: none;
+      z-index: 10;
+    }
   </style>
 </head>
 <body>
-  
-
-  <!-- Video jadi background -->
+  <!-- Video background -->
   <video id="bgVideo" autoplay loop muted playsinline>
     <source src="BGS.mp4" type="video/mp4">
   </video>
 
+  <!-- Offline indicator -->
+  <div class="offline-indicator" id="offlineIndicator">Offline Mode</div>
+
+  <!-- Install modal -->
+  <div class="install-modal" id="installModal">
+    <div class="install-modal-content">
+      <h2>Install We9 Music Player</h2>
+      <p>Install this app on your device for offline access and quick launching.</p>
+      <button id="installButton">Install App</button>
+      <button class="close" id="closeInstallModal">Not Now</button>
+      <p><small>After installation, you can find the app in your app drawer or desktop.</small></p>
+    </div>
+  </div>
+
   <header>
     <h1>We9</h1>
-    <button class="download-btn"></button>
+    <button class="download-btn" id="installBtn"></button>
   </header>
   <main>
     <div>
@@ -126,6 +202,34 @@
   </main>
 
   <script>
+    // Service Worker Registration untuk PWA
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js')
+          .then((registration) => {
+            console.log('SW registered: ', registration);
+          })
+          .catch((registrationError) => {
+            console.log('SW registration failed: ', registrationError);
+          });
+      });
+    }
+
+    // Deteksi status koneksi
+    window.addEventListener('online', () => {
+      document.getElementById('offlineIndicator').style.display = 'none';
+    });
+
+    window.addEventListener('offline', () => {
+      document.getElementById('offlineIndicator').style.display = 'block';
+    });
+
+    // Cek apakah offline saat pertama kali load
+    if (!navigator.onLine) {
+      document.getElementById('offlineIndicator').style.display = 'block';
+    }
+
+    // Logic untuk audio player
     const audios = document.querySelectorAll("audio");
 
     audios.forEach((audio, index) => {
@@ -145,7 +249,73 @@
         audios[nextIndex].play();
       });
     });
-  </script>
 
+    // PWA Installation Logic
+    let deferredPrompt;
+    const installBtn = document.getElementById('installBtn');
+    const installModal = document.getElementById('installModal');
+    const installButton = document.getElementById('installButton');
+    const closeInstallModal = document.getElementById('closeInstallModal');
+
+    // Event listener untuk beforeinstallprompt
+    window.addEventListener('beforeinstallprompt', (e) => {
+      // Prevent the mini-infobar from appearing on mobile
+      e.preventDefault();
+      // Stash the event so it can be triggered later
+      deferredPrompt = e;
+      
+      // Show install button
+      installBtn.style.display = 'block';
+      
+      // Show modal after a delay
+      setTimeout(() => {
+        if (!localStorage.getItem('installModalShown')) {
+          installModal.style.display = 'flex';
+          localStorage.setItem('installModalShown', 'true');
+        }
+      }, 3000);
+    });
+
+    // Install button click handler
+    installBtn.addEventListener('click', () => {
+      installModal.style.display = 'flex';
+    });
+
+    // Install button in modal
+    installButton.addEventListener('click', async () => {
+      if (deferredPrompt) {
+        // Show the install prompt
+        deferredPrompt.prompt();
+        // Wait for the user to respond to the prompt
+        const { outcome } = await deferredPrompt.userChoice;
+        console.log(`User response to the install prompt: ${outcome}`);
+        // We've used the prompt, and can't use it again, discard it
+        deferredPrompt = null;
+        // Hide the install button
+        installBtn.style.display = 'none';
+        // Hide modal
+        installModal.style.display = 'none';
+      }
+    });
+
+    // Close modal button
+    closeInstallModal.addEventListener('click', () => {
+      installModal.style.display = 'none';
+    });
+
+    // Close modal when clicking outside
+    installModal.addEventListener('click', (e) => {
+      if (e.target === installModal) {
+        installModal.style.display = 'none';
+      }
+    });
+
+    // Event listener untuk appinstalled
+    window.addEventListener('appinstalled', (e) => {
+      console.log('PWA was installed');
+      installBtn.style.display = 'none';
+      installModal.style.display = 'none';
+    });
+  </script>
 </body>
 </html>
