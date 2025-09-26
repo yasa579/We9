@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Song</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Mrs+Sheppards&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      margin: 150px 0 0 0;
+      color: white;
+      position: relative;
+      z-index: 1;
+      user-select: none;
+    }
+    h1,h2,h3,h4,h5,h6 {
+      font-family: 'Mrs Sheppards', cursive;
+      margin: 0;
+    }
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      margin-bottom: 40px;
+      color: white;
+      z-index: 2;
+      background: rgba(0,0,0,0.5);
+    }
+    header h1 {
+      font-size: 2em;
+      margin: 20px;
+    }
+    header .download-btn {
+      font-size: 2em;
+      margin: 20px;
+    }
+    main{
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      z-index: 2;
+    }
+    .download-btn {
+      width: 40px;
+      height: 40px;
+      background: url(Download.svg) no-repeat center center;
+      background-size: contain;
+      border: none;
+      cursor: pointer;
+    }
+
+    label {
+      font-size: 1.2em;
+      font-weight: bold;
+      color: white;
+      text-align: left;
+    }
+    audio {
+      margin-top: 10px;
+    }
+    div {
+      width: 350px;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      border-radius: 10px;
+      background: rgba(0,0,0,0.5); /* biar teks tetap jelas */
+      z-index: 2;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    }
+    /* Video background */
+    #bgVideo {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: -1;
+    }
+  </style>
+</head>
+<body>
+  
+
+  <!-- Video jadi background -->
+  <video id="bgVideo" autoplay loop muted playsinline>
+    <source src="BGS.mp4" type="video/mp4">
+  </video>
+
+  <header>
+    <h1>We9</h1>
+    <button class="download-btn"></button>
+  </header>
+  <main>
+    <div>
+      <label for="matematika">Matematika</label>
+      <audio id="matematika" src="Matematika.mp3" controls></audio>
+    </div>
+    <div>
+      <label for="mimpi">Mimpi</label>
+      <audio id="mimpi" src="Mimpi.mp3" controls></audio>
+    </div>
+    <div>
+      <label for="kunang-kunang">Kunang-Kunang</label>
+      <audio id="kunang-kunang" src="Kunang-Kunang.mp3" controls></audio>
+    </div>
+    <div>
+      <label for="memori-suara">Memori Suara</label>
+      <audio id="memori-suara" src="Memori-Suara.mp3" controls></audio>
+    </div>
+  </main>
+
+  <script>
+    const audios = document.querySelectorAll("audio");
+
+    audios.forEach((audio, index) => {
+      // Pause lagu lain kalau user play salah satu
+      audio.addEventListener("play", () => {
+        audios.forEach((other, i) => {
+          if (i !== index) {
+            other.pause();
+            other.currentTime = 0;
+          }
+        });
+      });
+
+      // Kalau lagu selesai → play berikutnya
+      audio.addEventListener("ended", () => {
+        let nextIndex = (index + 1) % audios.length; // kalau habis balik ke awal
+        audios[nextIndex].play();
+      });
+    });
+  </script>
+
+</body>
+</html>
