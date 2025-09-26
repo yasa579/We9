@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>We9 - Spotify Clone</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <h1>We9</h1>
+            </div>
+            <nav class="nav">
+                <ul>
+                    <li><a href="#" class="active">Beranda</a></li>
+                    <li><a href="#">Cari</a></li>
+                    <li><a href="#">Koleksi Kamu</a></li>
+                </ul>
+            </nav>
+            <div class="playlists">
+                <h3>Playlist Kamu</h3>
+                <button id="create-playlist-btn">+ Buat Playlist</button>
+                <div id="playlists-container">
+                    <!-- Daftar playlist akan dimuat di sini -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <header class="header">
+                <div class="search-bar">
+                    <input type="text" id="search-input" placeholder="Cari lagu, artis, atau album...">
+                    <button id="search-btn">Cari</button>
+                </div>
+                <div class="user-menu">
+                    <span id="user-name">Guest</span>
+                </div>
+            </header>
+
+            <div class="content">
+                <h2>Lagu Populer</h2>
+                <div id="songs-container" class="songs-grid">
+                    <!-- Daftar lagu akan dimuat di sini -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Music Player -->
+        <div class="music-player">
+            <div class="song-info">
+                <img id="current-song-img" src="assets/default-song.jpg" alt="Current Song">
+                <div>
+                    <h4 id="current-song-title">Pilih lagu untuk diputar</h4>
+                    <p id="current-song-artist">-</p>
+                </div>
+            </div>
+            <div class="player-controls">
+                <button id="prev-btn">⏮</button>
+                <button id="play-btn">▶</button>
+                <button id="next-btn">⏭</button>
+                <div class="progress-container">
+                    <span id="current-time">0:00</span>
+                    <div class="progress-bar">
+                        <div class="progress"></div>
+                    </div>
+                    <span id="duration">0:00</span>
+                </div>
+                <button id="loop-btn">🔁</button>
+            </div>
+            <audio id="audio-player"></audio>
+        </div>
+    </div>
+
+    <!-- Modal untuk membuat playlist -->
+    <div id="playlist-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Buat Playlist Baru</h2>
+            <input type="text" id="playlist-name" placeholder="Nama playlist">
+            <button id="save-playlist">Simpan</button>
+        </div>
+    </div>
+
+    <script type="module" src="js/firebase.js"></script>
+    <script type="module" src="js/app.js"></script>
+    <script type="module" src="js/player.js"></script>
+</body>
+</html>
